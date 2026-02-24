@@ -1,0 +1,1497 @@
+<!doctype html>
+<html lang="nl-BE">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+
+  <title>Yassin Toufahi — Datacommunicatie & Netwerkinstallaties</title>
+  <meta name="description" content="Student Datacommunicatie & Netwerkinstallaties. Troubleshooting, coding (Luau/Python), HTML/CSS, hosting/domains, en community ervaring." />
+
+  <style>
+    :root{
+      --bg:#050806;
+      --bg2:#070c09;
+      --panel:#09110c;
+      --panel2:#0b160f;
+      --border:#133a22;
+      --text:#d7e5db;
+      --muted:#93ab9d;
+      --accent:#2bff88;
+
+      --shadow: 0 18px 70px rgba(0,0,0,.55);
+      --radius: 18px;
+      --radius2: 14px;
+      --maxw: 1140px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+
+      --t-fast: 140ms;
+      --t-mid: 240ms;
+      --t-slow: 560ms;
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    html{ scroll-behavior: smooth; }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1200px 650px at 20% 0%, rgba(43,255,136,.11), transparent 60%),
+        radial-gradient(900px 520px at 85% 10%, rgba(23,210,108,.07), transparent 60%),
+        linear-gradient(180deg, var(--bg) 0%, #040705 65%, #030604 100%);
+      overflow-x:hidden;
+    }
+
+    /* Subtiele grid + scanlines */
+    .bg-grid{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.20;
+      background-image:
+        linear-gradient(rgba(43,255,136,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(43,255,136,.05) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(900px 540px at 35% 8%, #000 38%, transparent 75%);
+      z-index:-2;
+    }
+    .bg-scan{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.08;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.05) 0px,
+        rgba(255,255,255,.05) 1px,
+        transparent 3px,
+        transparent 6px
+      );
+      z-index:-1;
+      animation: scanDrift 8s linear infinite;
+    }
+    @keyframes scanDrift{
+      0%{ transform: translateY(0); }
+      100%{ transform: translateY(8px); }
+    }
+
+    a{ color:inherit; text-decoration:none; }
+    a:hover{ color: var(--accent); }
+    .wrap{
+      width: min(var(--maxw), calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header{
+      position:sticky; top:0; z-index:60;
+      backdrop-filter: blur(14px);
+      background: rgba(5,8,6,.72);
+      border-bottom: 1px solid rgba(19,58,34,.65);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 14px;
+      padding: 14px 0;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width: 240px;
+    }
+    .logo{
+      width: 36px; height:36px; border-radius: 12px;
+      border: 1px solid rgba(43,255,136,.35);
+      background:
+        radial-gradient(circle at 35% 35%, rgba(43,255,136,.28), transparent 55%),
+        linear-gradient(180deg, rgba(11,18,14,.95), rgba(5,8,6,.85));
+      box-shadow: 0 0 0 5px rgba(43,255,136,.06);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:-80%;
+      background: linear-gradient(90deg, transparent, rgba(43,255,136,.18), transparent);
+      transform: rotate(25deg);
+      animation: logoSweep 4.8s ease-in-out infinite;
+    }
+    @keyframes logoSweep{
+      0%{ transform: translateX(-30%) rotate(25deg); opacity:.0; }
+      20%{ opacity:.55; }
+      55%{ opacity:.35; }
+      100%{ transform: translateX(30%) rotate(25deg); opacity:0; }
+    }
+
+    .brand-title{
+      display:flex; flex-direction:column; line-height:1.1;
+    }
+    .brand-title strong{
+      font-family: var(--mono);
+      font-size: 14px; letter-spacing:.35px;
+    }
+    .brand-title span{
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    nav ul{
+      display:flex; align-items:center; gap: 10px;
+      list-style:none; padding:0; margin:0;
+      flex-wrap:wrap; justify-content:center;
+    }
+    .navlink{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast), transform var(--t-fast);
+    }
+    .navlink:hover{
+      color: var(--text);
+      border-color: rgba(43,255,136,.28);
+      background: rgba(11,18,14,.50);
+      transform: translateY(-1px);
+    }
+
+    .actions{
+      display:flex; align-items:center; gap:10px;
+      justify-content:flex-end;
+      min-width: 260px;
+    }
+    .pill{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      border: 1px solid rgba(19,58,34,.80);
+      background: rgba(11,18,14,.58);
+      padding: 9px 10px;
+      border-radius: 999px;
+      display:inline-flex;
+      align-items:center;
+      gap: 8px;
+      transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
+      user-select:none;
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      border-color: rgba(43,255,136,.45);
+      background: rgba(11,18,14,.86);
+      color: var(--text);
+    }
+    .btn{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(43,255,136,.36);
+      background: linear-gradient(180deg, rgba(43,255,136,.16), rgba(5,8,6,.35));
+      color: var(--text);
+      cursor:pointer;
+      transition: transform var(--t-fast), box-shadow var(--t-fast), border-color var(--t-fast);
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(43,255,136,.58);
+      box-shadow: 0 14px 40px rgba(0,0,0,.45);
+    }
+    .btn.secondary{
+      border-color: rgba(19,58,34,.92);
+      background: rgba(11,18,14,.62);
+      box-shadow:none;
+      color: var(--muted);
+    }
+    .btn.secondary:hover{
+      color: var(--text);
+      border-color: rgba(43,255,136,.36);
+      background: rgba(11,18,14,.88);
+    }
+
+    /* Sections */
+    section{ padding: 58px 0; }
+    .hero{ padding: 44px 0 18px; }
+
+    .section-title{
+      display:flex; align-items:center; gap:10px;
+      margin: 0 0 14px;
+      font-family: var(--mono);
+      color: var(--accent);
+      font-size: 14px;
+      letter-spacing: .32px;
+    }
+    .section-title::before{
+      content:"//";
+      color: rgba(43,255,136,.62);
+    }
+    .muted{ color: var(--muted); }
+
+    /* Reveal animation */
+    .reveal{
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity var(--t-slow) ease, transform var(--t-slow) ease;
+    }
+    .reveal.in{
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero layout */
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 18px;
+      align-items:stretch;
+    }
+    .panel{
+      background: linear-gradient(180deg, rgba(11,18,14,.80), rgba(5,8,6,.62));
+      border: 1px solid rgba(19,58,34,.78);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .panel::after{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(900px 260px at 28% 0%, rgba(43,255,136,.14), transparent 60%);
+      pointer-events:none;
+    }
+    .panel-body{
+      position:relative;
+      padding: 24px;
+    }
+    .kbd{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      display:inline-flex;
+      gap: 8px;
+      align-items:center;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(19,58,34,.88);
+      background: rgba(9,17,12,.55);
+      user-select:none;
+    }
+    .title{
+      margin: 14px 0 10px;
+      font-size: clamp(30px, 3.6vw, 46px);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+    }
+    .subtitle{
+      margin: 0 0 14px;
+      font-family: var(--mono);
+      color: rgba(43,255,136,.90);
+      font-size: 13px;
+      letter-spacing: .35px;
+    }
+    .summary{
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+      max-width: 74ch;
+    }
+    .tags{
+      display:flex; flex-wrap:wrap; gap: 10px;
+      margin: 0 0 16px;
+    }
+    .tag{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      border: 1px solid rgba(19,58,34,.88);
+      background: rgba(9,17,12,.52);
+      padding: 7px 10px;
+      border-radius: 999px;
+      user-select:none;
+      transition: transform var(--t-fast), border-color var(--t-fast);
+    }
+    .tag:hover{
+      transform: translateY(-1px);
+      border-color: rgba(43,255,136,.40);
+    }
+    .tag strong{ color: var(--accent); font-weight: 650; }
+    .hero-actions{
+      display:flex; flex-wrap:wrap; gap: 10px;
+      margin-top: 6px;
+    }
+
+    /* Terminal side card */
+    .terminal{
+      background: linear-gradient(180deg, rgba(9,17,12,.78), rgba(5,8,6,.62));
+      border: 1px solid rgba(19,58,34,.78);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .term-top{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(19,58,34,.78);
+      background: rgba(10,15,12,.55);
+    }
+    .dots{ display:flex; gap:7px; align-items:center; }
+    .dot{
+      width: 10px; height:10px; border-radius:999px;
+      border: 1px solid rgba(43,255,136,.28);
+      background: rgba(43,255,136,.10);
+    }
+    .term-title{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .term-body{
+      padding: 14px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.65;
+      color: rgba(215,229,219,.92);
+      white-space: pre-wrap;
+      position:relative;
+    }
+    .prompt{ color: rgba(43,255,136,.90); }
+    .dim{ color: rgba(145,167,154,.92); }
+    .cursor{
+      display:inline-block;
+      width: 9px;
+      height: 14px;
+      background: rgba(43,255,136,.9);
+      margin-left: 6px;
+      vertical-align: -2px;
+      animation: blink 1.05s steps(2, end) infinite;
+      border-radius: 2px;
+      box-shadow: 0 0 10px rgba(43,255,136,.25);
+    }
+    @keyframes blink{
+      0%,49%{ opacity:1; }
+      50%,100%{ opacity:0; }
+    }
+
+    /* Cards grid */
+    .grid{ display:grid; gap: 14px; }
+    .grid.skills{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.services{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .card{
+      background: linear-gradient(180deg, rgba(11,18,14,.72), rgba(5,8,6,.58));
+      border: 1px solid rgba(19,58,34,.78);
+      border-radius: var(--radius2);
+      padding: 16px;
+      transition: transform var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 160px at 25% 0%, rgba(43,255,136,.10), transparent 60%);
+      pointer-events:none;
+      opacity:.0;
+      transition: opacity var(--t-mid);
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(43,255,136,.38);
+      background: linear-gradient(180deg, rgba(11,18,14,.88), rgba(5,8,6,.64));
+    }
+    .card:hover::after{ opacity:1; }
+    .card h3{
+      margin: 0 0 10px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(43,255,136,.92);
+      letter-spacing: .30px;
+      position:relative;
+    }
+    .card ul{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      position:relative;
+    }
+    .card p{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+      position:relative;
+    }
+    .icon{
+      width: 34px; height:34px; border-radius: 12px;
+      border: 1px solid rgba(43,255,136,.28);
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom: 10px;
+      background: rgba(9,17,12,.55);
+      color: rgba(43,255,136,.92);
+      font-family: var(--mono);
+      font-size: 12px;
+      user-select:none;
+    }
+
+    /* Learning box (1 doc) */
+    .docbox{
+      border: 1px solid rgba(19,58,34,.78);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(11,18,14,.70), rgba(5,8,6,.58));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .dochead{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(19,58,34,.78);
+      background: rgba(10,15,12,.55);
+    }
+    .dochead .left{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex; gap: 10px; align-items:center;
+    }
+    .badge{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(43,255,136,.25);
+      background: rgba(43,255,136,.08);
+      color: rgba(43,255,136,.92);
+      white-space:nowrap;
+      user-select:none;
+    }
+    .docbody{ padding: 8px; }
+    .docitem{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 12px;
+      padding: 14px 12px;
+      border-radius: 14px;
+      border: 1px solid transparent;
+      transition: border-color var(--t-fast), transform var(--t-fast), background var(--t-fast);
+    }
+    .docitem:hover{
+      border-color: rgba(43,255,136,.28);
+      background: rgba(9,17,12,.40);
+      transform: translateY(-1px);
+    }
+    .docname{
+      min-width:0;
+      display:flex; flex-direction:column; gap: 4px;
+    }
+    .docname strong{
+      font-family: var(--mono);
+      font-size: 13px;
+      color: rgba(215,229,219,.98);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .docname span{
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .docactions{
+      display:flex; gap: 8px; align-items:center; justify-content:flex-end;
+      flex-shrink:0;
+    }
+    .smallbtn{
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 9px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(19,58,34,.88);
+      background: rgba(9,17,12,.55);
+      color: var(--muted);
+      cursor:pointer;
+      transition: border-color var(--t-fast), color var(--t-fast), transform var(--t-fast);
+      user-select:none;
+    }
+    .smallbtn:hover{
+      color: var(--text);
+      border-color: rgba(43,255,136,.38);
+      transform: translateY(-1px);
+    }
+
+    /* Luau section */
+    .split{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 14px;
+      align-items:stretch;
+    }
+    .callout{
+      border-radius: var(--radius);
+      border: 1px solid rgba(19,58,34,.78);
+      background: linear-gradient(180deg, rgba(11,18,14,.74), rgba(5,8,6,.60));
+      box-shadow: var(--shadow);
+      padding: 18px;
+      overflow:hidden;
+      position:relative;
+    }
+    .callout::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(900px 240px at 15% 0%, rgba(43,255,136,.10), transparent 58%);
+      pointer-events:none;
+    }
+    .callout h3{
+      margin:0 0 10px;
+      font-family: var(--mono);
+      color: rgba(43,255,136,.92);
+      font-size: 13px;
+      letter-spacing: .30px;
+      position:relative;
+    }
+    .callout p{
+      margin:0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+      position:relative;
+    }
+    .bullets{
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+      position:relative;
+    }
+    .metrics{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .metric{
+      border-radius: var(--radius2);
+      border: 1px solid rgba(19,58,34,.78);
+      background: rgba(9,17,12,.50);
+      padding: 14px;
+      transition: transform var(--t-fast), border-color var(--t-fast);
+      position:relative;
+      overflow:hidden;
+    }
+    .metric:hover{
+      transform: translateY(-2px);
+      border-color: rgba(43,255,136,.35);
+    }
+    .metric .k{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      position:relative;
+    }
+    .metric .v{
+      font-family: var(--mono);
+      font-size: 18px;
+      color: var(--text);
+      letter-spacing: .2px;
+      position:relative;
+    }
+    .metric .v strong{ color: var(--accent); }
+
+    .chartbox{
+      border-radius: var(--radius);
+      border: 1px solid rgba(19,58,34,.78);
+      background: linear-gradient(180deg, rgba(11,18,14,.74), rgba(5,8,6,.60));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .charthead{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 10px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(19,58,34,.78);
+      background: rgba(10,15,12,.55);
+    }
+    .charthead .left{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      display:flex; gap: 10px; align-items:center;
+    }
+    .chartbody{ padding: 12px 12px 16px; }
+    canvas{
+      width:100%;
+      height: 240px;
+      display:block;
+      border-radius: 14px;
+      background: rgba(9,17,12,.35);
+      border: 1px solid rgba(19,58,34,.45);
+    }
+
+    /* Contact */
+    .contact-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 14px;
+      align-items:stretch;
+    }
+    .contact-card{
+      border-radius: var(--radius);
+      border: 1px solid rgba(19,58,34,.78);
+      background: linear-gradient(180deg, rgba(11,18,14,.74), rgba(5,8,6,.60));
+      box-shadow: var(--shadow);
+      padding: 18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .contact-card h3{
+      margin:0 0 10px;
+      font-family: var(--mono);
+      color: rgba(43,255,136,.92);
+      font-size: 13px;
+      letter-spacing: .30px;
+      position:relative;
+    }
+    .contact-line{
+      display:flex; flex-wrap:wrap; gap: 10px;
+      align-items:center;
+      margin: 10px 0 0;
+      position:relative;
+    }
+    .bigmail{
+      font-family: var(--mono);
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(43,255,136,.28);
+      background: rgba(9,17,12,.55);
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      user-select:none;
+      transition: transform var(--t-fast), border-color var(--t-fast);
+    }
+    .bigmail:hover{
+      transform: translateY(-1px);
+      border-color: rgba(43,255,136,.40);
+    }
+
+    .toast{
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(9,17,12,.90);
+      border: 1px solid rgba(43,255,136,.30);
+      color: rgba(215,229,219,.96);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      box-shadow: 0 16px 50px rgba(0,0,0,.55);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity var(--t-fast), transform var(--t-fast);
+      z-index: 999;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    footer{
+      padding: 18px 0 34px;
+      color: rgba(147,171,157,.92);
+      font-family: var(--mono);
+      font-size: 12px;
+      text-align:center;
+      border-top: 1px solid rgba(19,58,34,.55);
+      background: rgba(5,8,6,.35);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .grid.services{ grid-template-columns: 1fr; }
+      .grid.skills{ grid-template-columns: 1fr; }
+      .contact-grid{ grid-template-columns: 1fr; }
+      .split{ grid-template-columns: 1fr; }
+      .metrics{ grid-template-columns: 1fr; }
+      nav ul{ display:none; }
+      .brand{ min-width:auto; }
+      .actions{ min-width:auto; }
+      canvas{ height: 220px; }
+    }
+
+    [id]{ scroll-margin-top: 86px; }
+
+    @media (prefers-reduced-motion: reduce){
+      html{ scroll-behavior: auto; }
+      .bg-scan, .logo::after{ animation:none !important; }
+      .reveal{ transition:none !important; transform:none !important; opacity:1 !important; }
+      .cursor{ animation:none !important; opacity:1 !important; }
+      *{ transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-scan"></div>
+
+  <header>
+    <div class="wrap">
+      <div class="nav">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div class="brand-title">
+            <strong id="navName">Yassin Toufahi</strong>
+            <span id="navTrack">Datacommunicatie en netwerkinstallaties</span>
+          </div>
+        </div>
+
+        <nav aria-label="Navigatie">
+          <ul>
+            <li><a class="navlink" href="#skills">Skills</a></li>
+            <li><a class="navlink" href="#services">Wat ik kan</a></li>
+            <li><a class="navlink" href="#learning">Leren</a></li>
+            <li><a class="navlink" href="#luau">Luau</a></li>
+            <li><a class="navlink" href="#contact">Contact</a></li>
+          </ul>
+        </nav>
+
+        <div class="actions">
+          <a class="btn" id="cvBtn" href="./CV.pdf" download>Download CV</a>
+          <a class="pill" id="emailPill" href="mailto:yassinthfs@gmail.com">yassinthfs@gmail.com</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div class="panel reveal">
+            <div class="panel-body">
+              <div class="kbd">
+                <span>student</span> •
+                <span style="color: var(--accent);">datacommunicatie & netwerkinstallaties</span> •
+                <span>NL/EN</span>
+              </div>
+
+              <h1 class="title" id="heroName">Yassin Toufahi</h1>
+              <div class="subtitle" id="heroRole">Datacommunicatie en netwerkinstallaties</div>
+
+              <p class="summary" id="heroSummary">
+                Ik ben een student die graag bezig is met netwerken, troubleshooting en coding.
+                Ik leer snel, ik werk stap voor stap, en ik probeer altijd dingen stabiel + veilig te houden.
+                Ik spreek vlot Nederlands én Engels.
+              </p>
+
+              <div class="tags" aria-label="Kernpunten">
+                <span class="tag"><strong>$</strong> DiskPart</span>
+                <span class="tag"><strong>$</strong> UEFI boot USB</span>
+                <span class="tag"><strong>$</strong> Troubleshooting</span>
+                <span class="tag"><strong>$</strong> Python (lerend)</span>
+                <span class="tag"><strong>$</strong> Luau (ervaring)</span>
+                <span class="tag"><strong>$</strong> HTML/CSS</span>
+                <span class="tag"><strong>$</strong> Hosting/domains</span>
+              </div>
+
+              <div class="hero-actions">
+                <a class="btn" href="./CV.pdf" download>Download CV</a>
+                <a class="btn secondary" id="emailBtn" href="mailto:yassinthfs@gmail.com">Mail mij</a>
+                <button class="btn secondary" id="copyEmailBtn" type="button">Kopieer e-mail</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="terminal reveal" aria-label="Terminal">
+            <div class="term-top">
+              <div class="dots" aria-hidden="true">
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+              </div>
+              <div class="term-title">/home/student/overmij.txt</div>
+            </div>
+            <div class="term-body" id="termBody">
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ whoami
+Yassin Toufahi
+
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ richting
+datacommunicatie en netwerkinstallaties
+
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ hoe-ik-werk
+security -> performance -> dan pas "fixed"
+
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ talen
+Nederlands (vlot) • Engels (vlot)
+
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ contact
+yassinthfs@gmail.com<span class="cursor" aria-hidden="true"></span>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+      <div class="wrap">
+        <h2 class="section-title reveal">Skills</h2>
+        <p class="muted reveal" style="margin:0 0 18px; max-width: 92ch;">
+          Wat ik kan en waar ik zelf echt mee bezig ben.
+        </p>
+
+        <div class="grid skills">
+          <div class="card reveal">
+            <h3>Windows / troubleshooting</h3>
+            <ul>
+              <li>DiskPart (basis) + logisch problemen zoeken rond disks/boot</li>
+              <li>UEFI boot USB maken en gebruiken voor recovery</li>
+              <li>Stap voor stap: change → test → pas dan verder</li>
+            </ul>
+          </div>
+
+          <div class="card reveal">
+            <h3>Netwerk (richting)</h3>
+            <ul>
+              <li>Basis datacommunicatie concepten (hoe dingen praten met elkaar)</li>
+              <li>Wi-Fi basics: signaal, interferentie, instellingen</li>
+              <li>Ik kan uitleggen wat er misloopt en waarom</li>
+            </ul>
+          </div>
+
+          <div class="card reveal">
+            <h3>Programming</h3>
+            <ul>
+              <li>Luau (Roblox) — systemen bouwen + debuggen</li>
+              <li>Python — momenteel aan het leren</li>
+              <li>HTML + CSS — websites maken en stylen</li>
+            </ul>
+          </div>
+
+          <div class="card reveal">
+            <h3>Web / hosting</h3>
+            <ul>
+              <li>Domains & DNS (basis) — ik snap hoe dat in elkaar zit</li>
+              <li>Zelf hosten en online zetten (praktisch)</li>
+              <li>Altijd clean: security eerst, dan performance</li>
+            </ul>
+          </div>
+
+          <div class="card reveal">
+            <h3>Mindset</h3>
+            <ul>
+              <li>Ik ga niet “snel snel” fixen zonder na te denken</li>
+              <li>Ik denk aan security & stability voordat ik iets push</li>
+              <li>Ik hou van duidelijke structuur (zoals in Roblox systems)</li>
+            </ul>
+          </div>
+
+          <div class="card reveal">
+            <h3>Talen</h3>
+            <ul>
+              <li>Nederlands — vlot</li>
+              <li>Engels — vlot</li>
+              <li>Ik kan dingen normaal uitleggen (niet te moeilijk)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="wrap">
+        <h2 class="section-title reveal">Wat ik kan</h2>
+        <p class="muted reveal" style="margin:0 0 18px; max-width: 92ch;">
+          Dit zijn dingen waar ik echt waarde kan geven, omdat ik het al zelf gedaan heb.
+        </p>
+
+        <div class="grid services">
+          <div class="card reveal">
+            <div class="icon">dbg</div>
+            <h3>Troubleshooting</h3>
+            <p>Ik pak issues aan met logica: oorzaak zoeken, fixen, en daarna testen.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">usb</div>
+            <h3>UEFI boot tools</h3>
+            <p>Bootable USB’s maken en gebruiken voor recovery / troubleshooting.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">sec</div>
+            <h3>Security mindset</h3>
+            <p>Ik denk eerst aan security, dan performance, en dan pas “oké klaar”.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">web</div>
+            <h3>Web basics</h3>
+            <p>HTML/CSS sites bouwen en ook effectief online zetten met domain/hosting.</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">lua</div>
+            <h3>Luau systemen</h3>
+            <p>Systemen maken die anderen kunnen gebruiken + snappen (Roblox).</p>
+          </div>
+
+          <div class="card reveal">
+            <div class="icon">com</div>
+            <h3>Community</h3>
+            <p>Mensen helpen groeien in coding en alles netjes organiseren.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LEARNING -->
+    <section id="learning">
+      <div class="wrap">
+        <h2 class="section-title reveal">Leren</h2>
+
+        <div class="docbox reveal">
+          <div class="dochead">
+            <div class="left">
+              <span style="color: rgba(43,255,136,.92); font-family: var(--mono);">docs</span>
+              <span class="muted">school</span>
+            </div>
+            <!-- ✅ veranderd zoals jij wou -->
+            <div class="badge" id="learnBadge">documenten</div>
+          </div>
+
+          <div class="docbody">
+            <div class="docitem">
+              <div class="docname">
+                <strong id="learnDocName">eentjes_en_nulletjes.pdf</strong>
+                <span id="learnDocDesc">Basis: binaire logica / hoe computers “denken”.</span>
+              </div>
+              <div class="docactions">
+                <a class="smallbtn" id="learnViewBtn" href="./docs/eentjes_en_nulletjes.pdf" target="_blank" rel="noreferrer">Bekijk</a>
+                <a class="smallbtn" id="learnDownloadBtn" href="./docs/eentjes_en_nulletjes.pdf" download>Download</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LUAU / COMMUNITY -->
+    <section id="luau">
+      <div class="wrap">
+        <h2 class="section-title reveal">Luau & Community (2021–2024)</h2>
+        <p class="muted reveal" style="margin:0 0 18px; max-width: 92ch;">
+          Ik bouwde een community rond coding, ik deelde systemen die mensen konden gebruiken, en dat is serieus gegroeid.
+        </p>
+
+        <div class="split">
+          <div class="callout reveal">
+            <h3>Mijn ervaring</h3>
+            <p>
+              In 2021–2024 heb ik in Luau (Roblox) systemen gemaakt die anderen konden implementeren in hun game.
+              Ik gaf uitleg, support, en ik hield het simpel zodat mensen het echt begrepen.
+            </p>
+            <ul class="bullets">
+              <li>Systemen gedeeld die beginners snel konden gebruiken.</li>
+              <li>Discord community opgebouwd en actief geholpen.</li>
+              <li>Altijd met die “security → performance → fixed” manier van denken.</li>
+            </ul>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="k">Discord community</div>
+                <div class="v"><strong id="discordCount">5.000+</strong> leden</div>
+              </div>
+              <div class="metric">
+                <div class="k">Verdiend</div>
+                <div class="v"><strong id="robuxProfit">300.000</strong> Robux</div>
+              </div>
+              <div class="metric">
+                <div class="k">Periode</div>
+                <div class="v"><strong>2021</strong> → <strong>2024</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chartbox reveal">
+            <div class="charthead">
+              <div class="left">
+                <span style="color: rgba(43,255,136,.92); font-family: var(--mono);">grafiek</span>
+                <span class="muted">Robux groei</span>
+              </div>
+              <div class="badge">2021–2024</div>
+            </div>
+            <div class="chartbody">
+              <canvas id="robuxChart" width="900" height="320" aria-label="Grafiek Robux groei" role="img"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div class="wrap">
+        <h2 class="section-title reveal">Contact</h2>
+
+        <div class="contact-grid">
+          <div class="contact-card reveal">
+            <h3>Stuur mij</h3>
+            <p class="muted" style="margin:0; line-height:1.6; position:relative;">
+              Mail is het makkelijkst, ik reageer zo snel ik kan.
+            </p>
+
+            <div class="contact-line">
+              <a class="bigmail" id="bigMail" href="mailto:yassinthfs@gmail.com">
+                <span style="color: rgba(43,255,136,.92); font-family:var(--mono);">mail:</span>
+                <span id="mailText" style="color: var(--text);">yassinthfs@gmail.com</span>
+              </a>
+              <button class="btn secondary" id="copyEmailBtn2" type="button">Kopieer e-mail</button>
+            </div>
+
+            <div style="margin-top: 12px; display:flex; flex-wrap:wrap; gap:10px; position:relative;">
+              <span class="pill" id="locationPill">📍 België</span>
+              <span class="pill">NL/EN</span>
+              <a class="pill" href="#" id="linkedinLink" target="_blank" rel="noreferrer" style="display:none;">LinkedIn</a>
+              <a class="pill" href="#" id="githubLink" target="_blank" rel="noreferrer" style="display:none;">GitHub</a>
+            </div>
+          </div>
+
+          <div class="contact-card reveal">
+            <h3>Mini samenvatting</h3>
+            <div class="term-body" style="padding:0; margin:0; font-family:var(--mono); font-size:12px; position:relative;">
+<span class="prompt">student@werkbank</span>:<span class="dim">~</span>$ quick
+- Datacommunicatie en netwerkinstallaties
+- Troubleshooting + security mindset
+- HTML/CSS + hosting/domains
+- Python (lerend) • Luau (ervaring)
+- Community: 5.000+ Discord • 300k Robux
+            </div>
+            <div style="margin-top: 12px; position:relative;">
+              <a class="btn" href="./CV.pdf" download>Download CV</a>
+              <a class="btn secondary" href="#luau" style="margin-left:8px;">Luau</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap" id="footerText">© Yassin Toufahi</div>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">Gekopieerd.</div>
+
+  <script>
+    // =========================
+    // EDIT HIER (makkelijk)
+    // =========================
+    const PROFIEL = {
+      naam: "Yassin Toufahi",
+      email: "yassinthfs@gmail.com",
+      locatie: "België",
+
+      // 1 doc (super easy aanpassen)
+      learningDoc: {
+        bestandsnaam: "eentjes_en_nulletjes.pdf",
+        beschrijving: "Basis: binaire logica / hoe computers “denken”.",
+        pad: "./docs/eentjes_en_nulletjes.pdf"
+      },
+
+      // cijfers (zonder username)
+      discordLeden: 5000,
+      winstRobux: 300000,
+
+      // grafiek (pas aan zoals jij wil)
+      robuxTimeline: [
+        { jaar: 2021, waarde: 0 },
+        { jaar: 2022, waarde: 40000 },
+        { jaar: 2023, waarde: 160000 },
+        { jaar: 2024, waarde: 300000 }
+      ],
+
+      // optioneel
+      linkedin: "",
+      github: ""
+    };
+
+    // Helpers
+    const $ = (id) => document.getElementById(id);
+
+    function formatNL(n){
+      try { return new Intl.NumberFormat("nl-BE").format(n); }
+      catch { return String(n); }
+    }
+
+    function formatDiscord(n){
+      if (n >= 1000) return formatNL(n) + "+";
+      return formatNL(n) + "+";
+    }
+
+    function setText(id, value){
+      const el = $(id);
+      if (el) el.textContent = value;
+    }
+
+    function setAttr(id, attr, value){
+      const el = $(id);
+      if (el) el.setAttribute(attr, value);
+    }
+
+    function setOptionalLink(id, url){
+      const el = $(id);
+      if (!el) return;
+      if (!url){
+        el.style.display = "none";
+        return;
+      }
+      el.style.display = "inline-flex";
+      el.setAttribute("href", url);
+    }
+
+    function toast(msg){
+      const t = $("toast");
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove("show"), 1400);
+    }
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast("Gekopieerd: " + text);
+      }catch{
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.top = "-1000px";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        try{
+          document.execCommand("copy");
+          toast("Gekopieerd: " + text);
+        }catch{
+          toast("Kopiëren mislukt.");
+        }
+        document.body.removeChild(ta);
+      }
+    }
+
+    // Populate UI
+    document.title = `${PROFIEL.naam} — Datacommunicatie en netwerkinstallaties`;
+
+    setText("navName", PROFIEL.naam.toUpperCase());
+    setText("heroName", PROFIEL.naam.toUpperCase());
+    setText("footerText", "© " + PROFIEL.naam);
+
+    const mailto = "mailto:" + PROFIEL.email;
+    setText("emailPill", PROFIEL.email);
+    setText("mailText", PROFIEL.email);
+    setAttr("emailPill", "href", mailto);
+    setAttr("emailBtn", "href", mailto);
+    setAttr("bigMail", "href", mailto);
+
+    setText("locationPill", "📍 " + PROFIEL.locatie);
+
+    // Learning doc (1)
+    setText("learnDocName", PROFIEL.learningDoc.bestandsnaam);
+    setText("learnDocDesc", PROFIEL.learningDoc.beschrijving);
+    setAttr("learnViewBtn", "href", PROFIEL.learningDoc.pad);
+    setAttr("learnDownloadBtn", "href", PROFIEL.learningDoc.pad);
+
+    // Metrics
+    setText("discordCount", formatDiscord(PROFIEL.discordLeden));
+    setText("robuxProfit", formatNL(PROFIEL.winstRobux));
+
+    // Optional links
+    setOptionalLink("linkedinLink", PROFIEL.linkedin);
+    setOptionalLink("githubLink", PROFIEL.github);
+
+    // Copy buttons
+    ["copyEmailBtn","copyEmailBtn2"].forEach((id) => {
+      const el = $(id);
+      if (el) el.addEventListener("click", () => copyToClipboard(PROFIEL.email));
+    });
+
+    // Terminal update
+    const term = $("termBody");
+    if (term){
+      const raw = term.textContent;
+      term.textContent = raw
+        .replaceAll("Yassin Toufahi", PROFIEL.naam.toUpperCase())
+        .replaceAll("yassinthfs@gmail.com", PROFIEL.email);
+      term.innerHTML = term.innerHTML.replace(
+        /<span class="cursor"[\s\S]*?<\/span>/g,
+        '<span class="cursor" aria-hidden="true"></span>'
+      );
+    }
+
+    // Reveal animatie
+    const revealEls = Array.from(document.querySelectorAll(".reveal"));
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries){
+        if (e.isIntersecting){
+          e.target.classList.add("in");
+          io.unobserve(e.target);
+        }
+      }
+    }, { threshold: 0.14 });
+    revealEls.forEach(el => io.observe(el));
+
+    // Chart (animated)
+    function drawChart(progress01){
+      const canvas = $("robuxChart");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+      const cssW = canvas.clientWidth || 900;
+      const cssH = canvas.clientHeight || 240;
+      canvas.width = Math.floor(cssW * dpr);
+      canvas.height = Math.floor(cssH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const W = cssW, H = cssH;
+      const pad = { l: 56, r: 18, t: 18, b: 34 };
+
+      const data = PROFIEL.robuxTimeline.slice().sort((a,b)=>a.jaar-b.jaar);
+      const years = data.map(x=>x.jaar);
+      const vals  = data.map(x=>x.waarde);
+
+      const maxV = Math.max(1, ...vals);
+      const niceMax = (function(){
+        const pow = Math.pow(10, Math.floor(Math.log10(maxV)));
+        const n = maxV / pow;
+        let step = 1;
+        if (n <= 1) step = 1;
+        else if (n <= 2) step = 2;
+        else if (n <= 5) step = 5;
+        else step = 10;
+        return step * pow;
+      })();
+
+      function xAt(i){
+        const span = Math.max(1, data.length - 1);
+        const t = (i / span);
+        return pad.l + t * (W - pad.l - pad.r);
+      }
+      function yAt(v){
+        const t = (v) / (niceMax);
+        return pad.t + (1 - t) * (H - pad.t - pad.b);
+      }
+
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = "rgba(9,17,12,0.25)";
+      ctx.fillRect(0,0,W,H);
+
+      // grid
+      ctx.strokeStyle = "rgba(43,255,136,0.12)";
+      ctx.lineWidth = 1;
+      const gridY = 4;
+      for (let i=0;i<=gridY;i++){
+        const y = pad.t + i * ((H - pad.t - pad.b)/gridY);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(W - pad.r, y);
+        ctx.stroke();
+      }
+
+      // axes
+      ctx.strokeStyle = "rgba(43,255,136,0.25)";
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t);
+      ctx.lineTo(pad.l, H - pad.b);
+      ctx.lineTo(W - pad.r, H - pad.b);
+      ctx.stroke();
+
+      // labels
+      ctx.fillStyle = "rgba(145,167,154,0.95)";
+      ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--mono").trim();
+
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let i=0;i<=gridY;i++){
+        const v = (niceMax / gridY) * (gridY - i);
+        const y = pad.t + i * ((H - pad.t - pad.b)/gridY);
+        ctx.fillText(formatNL(Math.round(v)), pad.l - 10, y);
+      }
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+      for (let i=0;i<years.length;i++){
+        const x = xAt(i);
+        ctx.fillText(String(years[i]), x, H - pad.b + 10);
+      }
+
+      const pts = data.map((p,i)=>({x:xAt(i), y:yAt(p.waarde)}));
+      const p = Math.max(0, Math.min(1, progress01));
+
+      // segment lengths
+      const segs = [];
+      let total = 0;
+      for (let i=1;i<pts.length;i++){
+        const dx = pts[i].x - pts[i-1].x;
+        const dy = pts[i].y - pts[i-1].y;
+        const len = Math.hypot(dx, dy);
+        segs.push(len);
+        total += len;
+      }
+      const target = total * p;
+
+      function strokeProgress(lineWidth, strokeStyle){
+        ctx.strokeStyle = strokeStyle;
+        ctx.lineWidth = lineWidth;
+        ctx.lineJoin = "round";
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+
+        let walked = 0;
+        for (let i=1;i<pts.length;i++){
+          const a = pts[i-1], b = pts[i];
+          const segLen = segs[i-1];
+          if (walked + segLen <= target){
+            ctx.lineTo(b.x, b.y);
+            walked += segLen;
+          }else{
+            const remain = target - walked;
+            const t = segLen === 0 ? 0 : (remain / segLen);
+            const x = a.x + (b.x - a.x) * t;
+            const y = a.y + (b.y - a.y) * t;
+            ctx.lineTo(x, y);
+            break;
+          }
+        }
+        ctx.stroke();
+      }
+
+      // area fill progressive
+      ctx.fillStyle = "rgba(43,255,136,0.08)";
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, H - pad.b);
+
+      let walked2 = 0;
+      for (let i=0;i<pts.length;i++){
+        if (i === 0){
+          ctx.lineTo(pts[0].x, pts[0].y);
+          continue;
+        }
+        const a = pts[i-1], b = pts[i];
+        const segLen = segs[i-1];
+        if (walked2 + segLen <= target){
+          ctx.lineTo(b.x, b.y);
+          walked2 += segLen;
+        }else{
+          const remain = target - walked2;
+          const t = segLen === 0 ? 0 : (remain / segLen);
+          const x = a.x + (b.x - a.x) * t;
+          const y = a.y + (b.y - a.y) * t;
+          ctx.lineTo(x, y);
+          break;
+        }
+      }
+
+      // endX
+      let endX = pts[0].x;
+      if (p >= 1) endX = pts[pts.length-1].x;
+      else{
+        let walked3 = 0;
+        for (let i=1;i<pts.length;i++){
+          const a = pts[i-1], b = pts[i];
+          const segLen = segs[i-1];
+          if (walked3 + segLen <= target){
+            endX = b.x;
+            walked3 += segLen;
+          }else{
+            const remain = target - walked3;
+            const t = segLen === 0 ? 0 : (remain / segLen);
+            endX = a.x + (b.x - a.x) * t;
+            break;
+          }
+        }
+      }
+
+      ctx.lineTo(endX, H - pad.b);
+      ctx.closePath();
+      ctx.fill();
+
+      // glow + line
+      strokeProgress(6, "rgba(43,255,136,0.22)");
+      strokeProgress(2, "rgba(43,255,136,0.95)");
+
+      // points
+      ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--mono").trim();
+      for (let i=0;i<pts.length;i++){
+        const pointT = (pts.length === 1) ? 1 : (i / (pts.length - 1));
+        if (p + 1e-6 < pointT) continue;
+
+        const pt = pts[i];
+
+        ctx.fillStyle = "rgba(43,255,136,1)";
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI*2);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(43,255,136,0.35)";
+        ctx.lineWidth = 6;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, 3.5, 0, Math.PI*2);
+        ctx.stroke();
+
+        ctx.fillStyle = "rgba(215,229,219,0.95)";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(formatNL(vals[i]) + " Robux", pt.x + 8, pt.y - 6);
+      }
+
+      // title inside chart
+      ctx.fillStyle = "rgba(145,167,154,0.95)";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("Robux groei (2021–2024)", pad.l, 10);
+    }
+
+    // animate chart when visible
+    let chartAnimated = false;
+    const chartEl = $("robuxChart");
+    if (chartEl){
+      const cio = new IntersectionObserver((entries) => {
+        for (const e of entries){
+          if (e.isIntersecting && !chartAnimated){
+            chartAnimated = true;
+            const start = performance.now();
+            const dur = 900;
+            function tick(now){
+              const t = Math.min(1, (now - start) / dur);
+              const eased = 1 - Math.pow(1 - t, 3);
+              drawChart(eased);
+              if (t < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+            cio.disconnect();
+          }
+        }
+      }, { threshold: 0.25 });
+      cio.observe(chartEl);
+
+      window.addEventListener("resize", () => {
+        if (chartAnimated) drawChart(1);
+      });
+    }
+  </script>
+</body>
+</html>
